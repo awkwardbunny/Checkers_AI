@@ -6,6 +6,8 @@
 #include<cstdlib>
 
 #define int2chr(i) (char)('0'+i)
+#define color1 termcolor::green
+#define color2 termcolor::cyan
 
 namespace Checkers {
 

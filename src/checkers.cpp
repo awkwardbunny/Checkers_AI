@@ -21,16 +21,17 @@ void GameState::print(){
 
 	for(int y = 0; y < 8; y++){
 		std::cout << " " << y << "|";
+		std::cout << termcolor::bold << termcolor::dark;
 		for(int x = 0; x < 4; x++){
 			if(y % 2){
 				//std::cout << termcolor::on_grey << ((iboard[x][y] % 2) ? termcolor::green : termcolor::yellow) << ((iboard[x][y] == 0) ? "  " : (iboard[x][y] > 2) ? "##" : "# ") << termcolor::on_white << "  ";
 				std::cout << termcolor::on_grey;
 				switch(iboard[x][y]){
 					case 0: std::cout << "  "; break;
-					case 1: std::cout << termcolor::red << ". "; break;
-					case 2: std::cout << termcolor::yellow << "* "; break;
-					case 3: std::cout << termcolor::red << "OO"; break;
-					case 4: std::cout << termcolor::yellow << "XX"; break;
+					case 1: std::cout << color1 << ". "; break;
+					case 2: std::cout << color2 << "* "; break;
+					case 3: std::cout << color1 << "OO"; break;
+					case 4: std::cout << color2 << "XX"; break;
 				}
 				std::cout << termcolor::on_white << "  ";
 			}else{
@@ -38,10 +39,10 @@ void GameState::print(){
 				std::cout << termcolor::on_white << "  " << termcolor::on_grey;
 				switch(iboard[x][y]){
 					case 0: std::cout << "  "; break;
-					case 1: std::cout << termcolor::red << ". "; break;
-					case 2: std::cout << termcolor::yellow << "* "; break;
-					case 3: std::cout << termcolor::red << "OO"; break;
-					case 4: std::cout << termcolor::yellow << "XX"; break;
+					case 1: std::cout <<  color1 << ". "; break;
+					case 2: std::cout <<  color2 << "* "; break;
+					case 3: std::cout <<  color1 << "OO"; break;
+					case 4: std::cout <<  color2 << "XX"; break;
 				}
 			}
 		}
@@ -49,6 +50,8 @@ void GameState::print(){
 		//std::cout << buf;
 	}
 	std::cout << "  +----------------+\n";
+	std::cout << "Current turn: Player " << turn+1 << "\n";
+	std::cout << (int)(this->time) << " seconds per turn\n";
 }
 
 std::istream& Checkers::operator>>(std::istream &in, GameState &gs){
@@ -61,7 +64,9 @@ std::istream& Checkers::operator>>(std::istream &in, GameState &gs){
 		}
 	}
 	in >> buf;
-	gs.turn = stoi(buf);
+	//gs.turn = stoi(buf);
+	//gs.turn--;
+	gs.turn = (buf[0] == '2');
 	in >> buf;
 	gs.time = stoi(buf);
 	return in;
@@ -78,7 +83,7 @@ std::ostream& Checkers::operator<<(std::ostream &out, GameState gs){
 		}
 		out << '\n';
 	}
-	out << int2chr(gs.turn) << '\n';
+	out << int2chr(gs.turn+1) << '\n';
 
 	char num[5];
 	sprintf(num,"%d",gs.time);
