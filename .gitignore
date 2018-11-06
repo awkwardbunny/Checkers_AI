@@ -1,3 +1,4 @@
 tests/
 *.o
 checkers
+*.swp

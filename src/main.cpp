@@ -1,8 +1,13 @@
 #include<checkers.hpp>
 
 int main(int argc, char **argv){
-	Checkers::GameState gs(10);
-	std::cin >> gs;
-	std::cout << gs;
-	gs.print();
+
+	using namespace Checkers;
+
+	//cout << "Would you like to load a saved game? (Y/n): ";
+
+	//Game g(10);
+	//std::cin >> g;
+	//std::cout << g;
+	//g.print();
 }

@@ -19,28 +19,36 @@ namespace Checkers {
 		unsigned int yPos : 3;
 	} Piece;
 
-	class GameState {
+	typedef struct {
+		uint8_t board [4][8] = {
+					{1,1,1,0,0,2,2,2},
+					{1,1,1,0,0,2,2,2},
+					{1,1,1,0,0,2,2,2},
+					{1,1,1,0,0,2,2,2}};
+		uint8_t turn = 0;
+	} GameState;
+
+	class Game {
 		public:
-			GameState(){}
-			GameState(uint8_t time);
-			//GameState(std::string in);
+			Game(){}
+			Game(uint8_t time);
+			//Game(std::string in);
+			//Game(uint8_t **iboard);
 
 			void setTime(uint8_t time);
 			uint8_t getTime();
 
-			friend std::ostream& operator<<(std::ostream &out, GameState gs);
-			friend std::istream& operator>>(std::istream &in, GameState &gs);
+			friend std::ostream& operator<<(std::ostream &out, Game gs);
+			friend std::istream& operator>>(std::istream &in, Game &gs);
 			void print();
 
 		private:
+
+			//char pmap[5] = { ' ', '.', '*', 'O', 'X' };
+
 			uint8_t time = 0;
 			uint8_t turn = 0;
-			uint8_t iboard[4][8] = {
-				{1,1,1,0,0,2,2,2},
-				{1,1,1,0,0,2,2,2},
-				{1,1,1,0,0,2,2,2},
-				{1,1,1,0,0,2,2,2}
-			};
+			GameState gs;
 
 			//Piece **pboard = (Piece**)iboard;
 
@@ -72,22 +80,8 @@ namespace Checkers {
 			//};
 	};
 
-	std::ostream& operator<<(std::ostream &out, GameState gs);
-	std::istream& operator>>(std::istream &in, GameState &gs);
-
-//	class Game {
-//		public:
-//			Game();
-//
-//			void start();
-//			void stop();
-//			void reset();
-//
-//			void load(GameState gs);
-//
-//			GameState getGameState();
-//			void setGameState(GameState gs);
-//	};
+	std::ostream& operator<<(std::ostream &out, Game gs);
+	std::istream& operator>>(std::istream &in, Game &gs);
 
 }
 
