@@ -20,6 +20,13 @@ namespace Checkers {
 	} Piece;
 
 	typedef struct {
+		unsigned int do_move: 1;
+		unsigned int xpos: 2;
+		unsigned int ypos: 3;
+		unsigned int dir: 2;
+	} Move;
+
+	typedef struct {
 		uint8_t board [4][8] = {
 					{1,1,1,0,0,2,2,2},
 					{1,1,1,0,0,2,2,2},
@@ -28,12 +35,24 @@ namespace Checkers {
 		uint8_t turn = 0;
 	} GameState;
 
+	class Player {
+		public:
+			void setCPU();
+			void findMoves(GameState gs, Move (&moves)[13][13]);
+			void makeMove(GameState &gs);
+		
+		private:
+			bool isCPU = false;
+	};
+
 	class Game {
 		public:
 			Game(){}
 			Game(uint8_t time);
 			//Game(std::string in);
 			//Game(uint8_t **iboard);
+			
+			void go();
 
 			void setTime(uint8_t time);
 			uint8_t getTime();
@@ -42,14 +61,16 @@ namespace Checkers {
 			friend std::istream& operator>>(std::istream &in, Game &gs);
 			void print();
 
+			void setPlayerCPU(int num);
+
 		private:
-
-			//char pmap[5] = { ' ', '.', '*', 'O', 'X' };
-
-			uint8_t time = 0;
+			bool active = false;
+			uint8_t time = 0; // 0 is unlim
 			uint8_t turn = 0;
+			Player players[2];
 			GameState gs;
 
+			//char pmap[5] = { ' ', '.', '*', 'O', 'X' };
 			//Piece **pboard = (Piece**)iboard;
 
 			//Piece pieces[24] = {
