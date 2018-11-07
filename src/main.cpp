@@ -1,9 +1,9 @@
 #include<fstream>
-#include<checkers.hpp>
+#include<othello.hpp>
 
 int main(int argc, char **argv){
 
-	using namespace Checkers;
+	using namespace Othello;
 
 	Game game;
 

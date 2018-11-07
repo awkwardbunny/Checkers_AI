@@ -1,8 +1,8 @@
 #include<cstring>
-#include<checkers.hpp>
+#include<othello.hpp>
 #include<termcolor.hpp>
 
-using namespace Checkers;
+using namespace Othello;
 
 Game::Game(uint8_t t){
 	setTime(t);
@@ -69,7 +69,7 @@ void Game::print(){
 	std::cout << (int)(this->time) << " seconds per turn\n";
 }
 
-std::istream& Checkers::operator>>(std::istream &in, Game &g){
+std::istream& Othello::operator>>(std::istream &in, Game &g){
 	std::string buf;
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 4; x++){
@@ -87,7 +87,7 @@ std::istream& Checkers::operator>>(std::istream &in, Game &g){
 	return in;
 }
 
-std::ostream& Checkers::operator<<(std::ostream &out, Game g){
+std::ostream& Othello::operator<<(std::ostream &out, Game g){
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 4; x++){
 			if(y % 2){

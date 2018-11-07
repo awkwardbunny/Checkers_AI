@@ -1,6 +1,6 @@
 .PHONY: all clean run
 
-TARGET = checkers
+TARGET = othello
 INCLUDE = includes
 INCL_H = $(wildcard includes/*)
 
@@ -9,7 +9,7 @@ CXX_FLAGS = -g -std=c++11 -I $(INCLUDE) -Wall -Werror
 
 all: run
 
-$(TARGET): checkers.o main.o
+$(TARGET): othello.o main.o
 	$(CXX) $^ -o $@
 
 %.o: src/%.cpp $(INCL_H)

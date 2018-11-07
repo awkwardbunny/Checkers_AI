@@ -1,5 +1,5 @@
-#ifndef __CHECKERS__
-#define __CHECKERS__
+#ifndef __OTHELLO__
+#define __OTHELLO__
 
 #include<string>
 #include<iostream>
@@ -9,7 +9,7 @@
 #define color1 termcolor::green
 #define color2 termcolor::cyan
 
-namespace Checkers {
+namespace Othello {
 
 	typedef struct {
 		unsigned int do_move: 1;
