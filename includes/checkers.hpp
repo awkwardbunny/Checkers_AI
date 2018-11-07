@@ -12,19 +12,26 @@
 namespace Checkers {
 
 	typedef struct {
+		unsigned int do_move: 1;
+		unsigned int xpos: 2;
+		unsigned int ypos: 3;
+		unsigned int dir: 2;
+	} Move;
+
+	typedef struct MoveNode MoveNode;
+	
+	struct MoveNode {
+		Move move;
+		MoveNode *a, *b, *c, *d;
+	};
+
+	typedef struct {
 		unsigned int player : 1;
 		unsigned int isKing : 1;
 		unsigned int isDead : 1;
 		unsigned int xPos : 2;
 		unsigned int yPos : 3;
 	} Piece;
-
-	typedef struct {
-		unsigned int do_move: 1;
-		unsigned int xpos: 2;
-		unsigned int ypos: 3;
-		unsigned int dir: 2;
-	} Move;
 
 	typedef struct {
 		uint8_t board [4][8] = {
@@ -38,7 +45,7 @@ namespace Checkers {
 	class Player {
 		public:
 			void setCPU();
-			void findMoves(GameState gs, Move (&moves)[13][13]);
+			void findMoves(GameState gs, MoveNode (&mn)[12]);
 			void makeMove(GameState &gs);
 		
 		private:
@@ -66,7 +73,6 @@ namespace Checkers {
 		private:
 			bool active = false;
 			uint8_t time = 0; // 0 is unlim
-			uint8_t turn = 0;
 			Player players[2];
 			GameState gs;
 

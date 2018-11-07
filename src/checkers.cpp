@@ -112,45 +112,27 @@ void Game::go(){
 	while(active){
 		print();
 
-		players[turn].makeMove(gs, turn);
+		players[gs.turn].makeMove(gs);
+		//gs.turn = !gs.turn;
 	}
 }
 
-void Player::findMoves(GameState gs, Move (&moves)[13][13]){
-	moves[0][0] = {.do_move = 1, .xpos = 0, .ypos = 2, .dir = 2};
-	moves[0][1] = {.do_move = 1, .xpos = 1, .ypos = 3, .dir = 0};
-	moves[0][2] = {0};
-	moves[1][0] = {.do_move = 1, .xpos = 0, .ypos = 2, .dir = 3};
-	moves[1][1] = {.do_move = 1, .xpos = 0, .ypos = 3, .dir = 0};
-	moves[1][2] = {0};
-	moves[2][0] = {.do_move = 1, .xpos = 1, .ypos = 2, .dir = 3};
-	moves[2][1] = {.do_move = 1, .xpos = 0, .ypos = 3, .dir = 0};
-	moves[2][2] = {0};
-	moves[3][0] = {.do_move = 0, .xpos = 0, .ypos = 0, .dir = 0};
+void Player::findMoves(GameState gs, MoveNode (&mn)[12]){
 
 }
 
-void Player::makeMove(GameState &gs, turn){
-	Move moves[13][13] = {0};
+void Player::makeMove(GameState &gs){
+	MoveNode moves[12];
 
 	// Find Moves
 	findMoves(gs, moves);
 
 	// Print Moves
 	printf("\nAvailable moves:\n");
-	for(int i = 0; i < 13; i++){
-		if(!moves[i][0].do_move) break;
-		printf("%d: ", i);
-		for(int j = 0; j < 13; j++){
-			if(!moves[i][j].do_move) break;
-
-			int y = moves[i][j].ypos;
-			int x = moves[i][j].xpos*2 + (y%2 == 0); // x transform
-			printf("(%d,%d)", x, y);
-			if(j != 12 && moves[i][j+1].do_move)
-				printf("->");
-		}
-		printf("\n");
+	for(int i = 0; i < 12; i++){
+		MoveNode cmn = moves[i];
+		cmn = cmn;
+		//while(
 	}
 
 	int choice;
@@ -163,4 +145,5 @@ void Player::makeMove(GameState &gs, turn){
 	std::cout << "You chose: " << choice;
 	std::cout << "\n\n\n";
 
+	gs.turn = !gs.turn;
 }
