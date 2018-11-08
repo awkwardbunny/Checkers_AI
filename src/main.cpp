@@ -16,7 +16,7 @@ int main(int argc, char **argv){
 	}
 	if(strLoad == "y"){
 		timeout = true;
-		game.setPlayerCPU(0);
+		//game.setPlayerCPU(0);
 	}
 
 	strLoad = "blah";
@@ -26,7 +26,7 @@ int main(int argc, char **argv){
 	}
 	if(strLoad == "y"){
 		timeout = true;
-		game.setPlayerCPU(1);
+		//game.setPlayerCPU(1);
 	}
 
 	strLoad = "blah";
