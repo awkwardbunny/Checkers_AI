@@ -2,7 +2,7 @@
 #define __OTHELLO__
 
 #include<string>
-#include<list>
+#include<vector>
 #include<iostream>
 #include<cstdlib>
 
@@ -35,7 +35,7 @@ namespace Othello {
 		public:
 			Player(){};
 			virtual void makeMove(GameState &gs) = 0;
-			void findMoves(GameState gs, std::list<Move> &moves);
+			void findMoves(GameState gs, std::vector<Move> &moves);
 	};
 
 	class Human: public Player {

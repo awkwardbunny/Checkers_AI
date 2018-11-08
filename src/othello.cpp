@@ -1,5 +1,5 @@
 #include<cstring>
-#include<list>
+#include<vector>
 #include<othello.hpp>
 #include<termcolor.hpp>
 
@@ -98,7 +98,7 @@ void Game::go(){
 	}
 }
 
-void Player::findMoves(GameState gs, std::list<Move> &moves){
+void Player::findMoves(GameState gs, std::vector<Move> &moves){
 	Move m;
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 8; x++){
@@ -180,53 +180,48 @@ void Player::findMoves(GameState gs, std::list<Move> &moves){
 
 void Human::makeMove(GameState &gs){
 	// Find moves
-	std::list<Move> moves;
+	std::vector<Move> moves;
 	findMoves(gs, moves);
 
 	// Print moves
+	std::cout << "\nAvailable moves: \n";
 	int counter = 0;
 	for(auto const& m : moves){
 		std::cout << counter++ << ": (" << m.xpos << "," << m.ypos << ")\n";
 	}
 	
 	// Pick move
-	std::string strChoice;
-	std::cin >> strChoice;
-	std::cout << (int)(gs.turn) << std::endl;
+	int choice = 999;
+	std::string gabario;
+	while(choice < 0 || choice > (signed int)moves.size()-1){
+		std::cout << "Pick your choice (0-" << moves.size()-1 << "): ";
+		std::cin >> choice;
+		if(std::cin.fail()){
+			choice = 999;
+			std::cin.clear();
+			std::cin >> gabario;
+			std::cout << "Invalid input!\n";
+		}
+	}
+
+	// Execute move
+	Move m = moves[choice];
+	int x = m.xpos;
+	int y = m.ypos;
+
+	gs.board[x][y] = gs.turn+1;
+	for(int i=x,j=y; gs.board[i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[++i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[++i][j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[++i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[--i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[--i][j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	for(int i=x,j=y; gs.board[--i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+
 	gs.turn = !gs.turn;
 }
 
 void Robot::makeMove(GameState &gs){
 	gs.turn = !gs.turn;
 }
-
-//void Player::findMoves(GameState gs, MoveNode (&mn)[12]){
-//
-//}
-//
-//void Player::makeMove(GameState &gs){
-//	MoveNode moves[12];
-//
-//	// Find Moves
-//	findMoves(gs, moves);
-//
-//	// Print Moves
-//	printf("\nAvailable moves:\n");
-//	for(int i = 0; i < 12; i++){
-//		MoveNode cmn = moves[i];
-//		cmn = cmn;
-//		//while(
-//	}
-//
-//	int choice;
-//	std::string strChoice;
-//	std::cout << "\nEnter the number that you'd like to choose: ";
-//	std::cin >> strChoice;
-//	choice = std::stoi(strChoice);
-//
-//	// Execute Moves
-//	std::cout << "You chose: " << choice;
-//	std::cout << "\n\n\n";
-//
-//	gs.turn = !gs.turn;
-//}
