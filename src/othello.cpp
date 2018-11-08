@@ -100,103 +100,78 @@ void Game::go(){
 
 void Player::findMoves(GameState gs, std::list<Move> &moves){
 	Move m;
-	for(int y = 0; y < 7; y++){
-		for(int x = 0; x < 7; x++){
+	for(int y = 0; y < 8; y++){
+		for(int x = 0; x < 8; x++){
 			// is valid move?
 			if(gs.board[x][y] != 0)
 				continue;
 
-			//std::cout << "(" << x << "," << y << ")";
 			int xi = x;
 			int yi = y;
 
 			// Check up (0)
-			if(y != 0 && gs.board[x][y-1] == (!gs.turn)){
-				while(gs.board[xi][--yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			if(y != 0 && gs.board[x][y-1] == (!gs.turn)+1){
+				while(gs.board[xi][--yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "0\n";
 				}
 			// Check up-right (1)
-			}else if(y != 0 && x != 7 && gs.board[x+1][y-1] == (!gs.turn)){
-				while(gs.board[++xi][--yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(y != 0 && x != 7 && gs.board[x+1][y-1] == (!gs.turn)+1){
+				while(gs.board[++xi][--yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "1\n";
 				}
 			// Check right (2)
-			}else if(x != 7 && gs.board[x+1][y] == (!gs.turn)){
-				while(gs.board[++xi][yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(x != 7 && gs.board[x+1][y] == (!gs.turn)+1){
+				while(gs.board[++xi][yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "2\n";
 				}
 			// Check down-right (3)
 			}else if(y != 7 && x != 7 && gs.board[x+1][y+1] == (!gs.turn)+1){
-				while(gs.board[++xi][++yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+				while(gs.board[++xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "3\n";
 				}
 			// Check down (4)
-			}else if(y != 7 && gs.board[x][y+1] == (!gs.turn)){
-				while(gs.board[xi][++yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(y != 7 && gs.board[x][y+1] == (!gs.turn)+1){
+				while(gs.board[xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "4\n";
 				}
 			// Check down-left (5)
-			}else if(y != 7 && x != 0 && gs.board[x-1][y+1] == (!gs.turn)){
-				while(gs.board[--xi][++yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(y != 7 && x != 0 && gs.board[x-1][y+1] == (!gs.turn)+1){
+				while(gs.board[--xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "5\n";
 				}
 			// Check left (6)
-			}else if(x != 0 && gs.board[x-1][y] == (!gs.turn)){
-				while(gs.board[--xi][yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(x != 0 && gs.board[x-1][y] == (!gs.turn)+1){
+				while(gs.board[--xi][yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "6\n";
 				}
 			// Check up-left (7)
-			}else if(x != 0 && y != 0 && gs.board[x-1][y-1] == (!gs.turn)){
-				while(gs.board[--xi][--yi] == (!gs.turn)+1)
-					std::cout << "(" << x << "," << y << ")";
+			}else if(x != 0 && y != 0 && gs.board[x-1][y-1] == (!gs.turn)+1){
+				while(gs.board[--xi][--yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
-					std::cout << "(" << xi << "," << yi << ")";
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
-					std::cout << "7\n";
 				}
 			}
 		}
