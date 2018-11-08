@@ -1,4 +1,5 @@
 #include<cstring>
+#include<list>
 #include<othello.hpp>
 #include<termcolor.hpp>
 
@@ -14,6 +15,10 @@ void Game::setTime(uint8_t t){
 
 uint8_t Game::getTime(){
 	return time;
+}
+
+void Game::setPlayer(int n, Player *p){
+	players[n] = p;
 }
 
 void Game::print(){
@@ -89,15 +94,134 @@ void Game::go(){
 	while(active){
 		print();
 
-		players[gs.turn].makeMove(gs);
-		//gs.turn = !gs.turn;
+		players[gs.turn]->makeMove(gs);
 	}
 }
 
-void Player::makeMove(GameState &gs){
+void Player::findMoves(GameState gs, std::list<Move> &moves){
+	Move m;
+	for(int y = 0; y < 7; y++){
+		for(int x = 0; x < 7; x++){
+			// is valid move?
+			if(gs.board[x][y] != 0)
+				continue;
+
+			//std::cout << "(" << x << "," << y << ")";
+			int xi = x;
+			int yi = y;
+
+			// Check up (0)
+			if(y != 0 && gs.board[x][y-1] == (!gs.turn)){
+				while(gs.board[xi][--yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "0\n";
+				}
+			// Check up-right (1)
+			}else if(y != 0 && x != 7 && gs.board[x+1][y-1] == (!gs.turn)){
+				while(gs.board[++xi][--yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "1\n";
+				}
+			// Check right (2)
+			}else if(x != 7 && gs.board[x+1][y] == (!gs.turn)){
+				while(gs.board[++xi][yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "2\n";
+				}
+			// Check down-right (3)
+			}else if(y != 7 && x != 7 && gs.board[x+1][y+1] == (!gs.turn)+1){
+				while(gs.board[++xi][++yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "3\n";
+				}
+			// Check down (4)
+			}else if(y != 7 && gs.board[x][y+1] == (!gs.turn)){
+				while(gs.board[xi][++yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "4\n";
+				}
+			// Check down-left (5)
+			}else if(y != 7 && x != 0 && gs.board[x-1][y+1] == (!gs.turn)){
+				while(gs.board[--xi][++yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "5\n";
+				}
+			// Check left (6)
+			}else if(x != 0 && gs.board[x-1][y] == (!gs.turn)){
+				while(gs.board[--xi][yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "6\n";
+				}
+			// Check up-left (7)
+			}else if(x != 0 && y != 0 && gs.board[x-1][y-1] == (!gs.turn)){
+				while(gs.board[--xi][--yi] == (!gs.turn)+1)
+					std::cout << "(" << x << "," << y << ")";
+				if(gs.board[xi][yi] == gs.turn+1){
+					std::cout << "(" << xi << "," << yi << ")";
+					m.xpos = x;
+					m.ypos = y;
+					moves.push_back(m);
+					std::cout << "7\n";
+				}
+			}
+		}
+	}
+}
+
+void Human::makeMove(GameState &gs){
+	// Find moves
+	std::list<Move> moves;
+	findMoves(gs, moves);
+
+	// Print moves
+	int counter = 0;
+	for(auto const& m : moves){
+		std::cout << counter++ << ": (" << m.xpos << "," << m.ypos << ")\n";
+	}
+	
+	// Pick move
 	std::string strChoice;
 	std::cin >> strChoice;
 	std::cout << (int)(gs.turn) << std::endl;
+	gs.turn = !gs.turn;
+}
+
+void Robot::makeMove(GameState &gs){
 	gs.turn = !gs.turn;
 }
 

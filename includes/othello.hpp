@@ -2,6 +2,7 @@
 #define __OTHELLO__
 
 #include<string>
+#include<list>
 #include<iostream>
 #include<cstdlib>
 
@@ -10,6 +11,12 @@
 #define color2 termcolor::cyan
 
 namespace Othello {
+
+	typedef struct {
+		unsigned int xpos : 3;
+		unsigned int ypos : 3;
+		//unsigned int unused : 2;
+	} Move;
 
 	typedef struct {
 		uint8_t board [8][8] = {
@@ -26,12 +33,24 @@ namespace Othello {
 
 	class Player {
 		public:
+			Player(){};
+			virtual void makeMove(GameState &gs) = 0;
+			void findMoves(GameState gs, std::list<Move> &moves);
+	};
+
+	class Human: public Player {
+		public:
+			void makeMove(GameState &gs);
+	};
+
+	class Robot: public Player {
+		public:
 			void makeMove(GameState &gs);
 	};
 
 	class Game {
 		public:
-			Game(){}
+			Game(): Game(0){}
 			Game(uint8_t time);
 			
 			void go();
@@ -42,11 +61,12 @@ namespace Othello {
 			friend std::ostream& operator<<(std::ostream &out, Game gs);
 			friend std::istream& operator>>(std::istream &in, Game &gs);
 			void print();
+			void setPlayer(int n, Player *p);
 
 		private:
 			bool active = false;
 			uint8_t time = 0; // 0 is unlim
-			Player players[2];
+			Player *players[2];
 			GameState gs;
 
 	};
