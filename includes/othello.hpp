@@ -62,6 +62,7 @@ namespace Othello {
 			friend std::istream& operator>>(std::istream &in, Game &gs);
 			void print();
 			void setPlayer(int n, Player *p);
+			void setTurn(int t);
 
 		private:
 			bool active = false;

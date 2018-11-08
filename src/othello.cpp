@@ -21,6 +21,10 @@ void Game::setPlayer(int n, Player *p){
 	players[n] = p;
 }
 
+void Game::setTurn(int t){
+	gs.turn = t;
+}
+
 void Game::print(){
 	std::cout << "y\\x 0   1   2   3   4   5   6   7\n";
 	//std::cout << termcolor::grey << "   ________________________________\n" << termcolor::reset;
@@ -109,6 +113,7 @@ void Player::findMoves(GameState gs, std::vector<Move> &moves){
 			int xi = x;
 			int yi = y;
 
+			bool added = false;
 			// Check up (0)
 			if(y != 0 && gs.board[x][y-1] == (!gs.turn)+1){
 				while(gs.board[xi][--yi] == (!gs.turn)+1);
@@ -116,62 +121,84 @@ void Player::findMoves(GameState gs, std::vector<Move> &moves){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check up-right (1)
-			}else if(y != 0 && x != 7 && gs.board[x+1][y-1] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && y != 0 && x != 7 && gs.board[x+1][y-1] == (!gs.turn)+1){
 				while(gs.board[++xi][--yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check right (2)
-			}else if(x != 7 && gs.board[x+1][y] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && x != 7 && gs.board[x+1][y] == (!gs.turn)+1){
 				while(gs.board[++xi][yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check down-right (3)
-			}else if(y != 7 && x != 7 && gs.board[x+1][y+1] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && y != 7 && x != 7 && gs.board[x+1][y+1] == (!gs.turn)+1){
 				while(gs.board[++xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check down (4)
-			}else if(y != 7 && gs.board[x][y+1] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && y != 7 && gs.board[x][y+1] == (!gs.turn)+1){
 				while(gs.board[xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check down-left (5)
-			}else if(y != 7 && x != 0 && gs.board[x-1][y+1] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && y != 7 && x != 0 && gs.board[x-1][y+1] == (!gs.turn)+1){
 				while(gs.board[--xi][++yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check left (6)
-			}else if(x != 0 && gs.board[x-1][y] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && x != 0 && gs.board[x-1][y] == (!gs.turn)+1){
 				while(gs.board[--xi][yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
+			}
 			// Check up-left (7)
-			}else if(x != 0 && y != 0 && gs.board[x-1][y-1] == (!gs.turn)+1){
+			xi = x; yi = y;
+			if(!added && x != 0 && y != 0 && gs.board[x-1][y-1] == (!gs.turn)+1){
 				while(gs.board[--xi][--yi] == (!gs.turn)+1);
 				if(gs.board[xi][yi] == gs.turn+1){
 					m.xpos = x;
 					m.ypos = y;
 					moves.push_back(m);
+					added = true;
 				}
 			}
 		}
