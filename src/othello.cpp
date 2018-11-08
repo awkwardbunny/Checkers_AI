@@ -38,8 +38,8 @@ void Game::print(){
 		for(int x = 0; x < 8; x++){
 			switch(gs.board[x][y]){
 				case 0: std::cout << termcolor::on_green << "___"; break;
-				case 1: std::cout << termcolor::on_white << termcolor::white << "_X_" << termcolor::grey ; break;
-				case 2: std::cout << termcolor::on_grey << "_O_"; break;
+				case 1: std::cout << termcolor::on_white << "___"; break;
+				case 2: std::cout << termcolor::on_grey << termcolor::white << "___" << termcolor::grey; break;
 			}
 			if(x != 7)
 				std::cout << termcolor::on_green << "|";
@@ -53,7 +53,7 @@ void Game::print(){
 std::istream& Othello::operator>>(std::istream &in, Game &g){
 	std::string buf;
 	for(int y = 0; y < 8; y++){
-		for(int x = 0; x < 4; x++){
+		for(int x = 0; x < 8; x++){
 			in >> buf;
 			g.gs.board[x][y] = buf[0]-'0';
 			//std::cout << buf[0]-'0';
@@ -70,12 +70,8 @@ std::istream& Othello::operator>>(std::istream &in, Game &g){
 
 std::ostream& Othello::operator<<(std::ostream &out, Game g){
 	for(int y = 0; y < 8; y++){
-		for(int x = 0; x < 4; x++){
-			if(y % 2){
-				out << int2chr(g.gs.board[x][y]) << "   ";
-			}else{
-				out << "  " << int2chr(g.gs.board[x][y]) << " ";
-			}
+		for(int x = 0; x < 8; x++){
+			out << int2chr(g.gs.board[x][y]) << " ";
 		}
 		out << '\n';
 	}
