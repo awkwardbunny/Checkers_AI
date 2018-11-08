@@ -35,15 +35,6 @@ int main(int argc, char **argv){
 
 	strLoad = "blah";
 	while(strLoad != "y" && strLoad != "n"){
-		std::cout << "Player one starts? (y/n): ";
-		std::cin >>	strLoad;
-	}
-	if(strLoad == "n"){
-		game.setTurn(1);
-	}
-
-	strLoad = "blah";
-	while(strLoad != "y" && strLoad != "n"){
 		std::cout << "Would you like to load a saved game? (y/n): ";
 		std::cin >>	strLoad;
 	}
@@ -56,6 +47,15 @@ int main(int argc, char **argv){
 		fin.open(strLoad);
 		fin >> game;
 		fin.close();
+	}else{
+		strLoad = "blah";
+		while(strLoad != "y" && strLoad != "n"){
+			std::cout << "Player one starts? (y/n): ";
+			std::cin >>	strLoad;
+		}
+		if(strLoad == "n"){
+			game.setTurn(1);
+		}
 	}
 
 	if(timeout){

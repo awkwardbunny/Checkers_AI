@@ -55,7 +55,7 @@ void Game::print(){
 		}
 		std::cout << termcolor::reset << "\n";
 	}
-	std::cout << "Current turn: Player " << gs.turn+1 << "\n";
+	std::cout << "Current turn: Player " << gs.turn+1 << " (" << ((gs.turn == 0) ? "WHITE" : "BLACK") << ")\n";
 	std::cout << (int)(this->time) << " seconds per turn\n";
 }
 
@@ -103,7 +103,7 @@ void Game::go(){
 }
 
 void Player::findMoves(GameState gs, std::vector<Move> &moves){
-	Move m;
+	Move m = {.xpos = 0, .ypos = 0, .gs = NULL};
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 8; x++){
 			// is valid move?
@@ -233,20 +233,81 @@ void Human::makeMove(GameState &gs){
 
 	// Execute move
 	Move m = moves[choice];
+	executeMove(gs, m);
+
+	gs.turn = !gs.turn;
+}
+
+void Player::executeMove(GameState &gs, Move m){
 	int x = m.xpos;
 	int y = m.ypos;
 
-	gs.board[x][y] = gs.turn+1;
-	for(int i=x,j=y; gs.board[i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[++i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[++i][j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[++i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[--i][++j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[--i][j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
-	for(int i=x,j=y; gs.board[--i][--j] == (!gs.turn)+1;) gs.board[i][j] = gs.turn+1;
+	int xi, yi;
 
-	gs.turn = !gs.turn;
+	// Process UP
+	xi = x, yi = y;
+	while(yi != 0 && gs.board[xi][--yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[xi][++yi] = gs.turn+1;
+	}
+
+	// Process UP-RIGHT
+	xi = x, yi = y;
+	while(yi != 0 && xi != 7 && gs.board[++xi][--yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x && yi != y) // Come back and flip on the way
+			gs.board[--xi][++yi] = gs.turn+1;
+	}
+
+	// Process RIGHT
+	xi = x, yi = y;
+	while(xi != 7 && gs.board[++xi][yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y){ // Come back and flip on the way
+			gs.board[--xi][yi] = gs.turn+1;
+		}
+	}
+
+	// Process DOWN-RIGHT
+	xi = x, yi = y;
+	while(yi != 7 && xi != 7 && gs.board[++xi][++yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[--xi][--yi] = gs.turn+1;
+	}
+
+	// Process DOWN
+	xi = x, yi = y;
+	while(yi != 7 && gs.board[xi][++yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[xi][--yi] = gs.turn+1;
+	}
+
+	// Process DOWN-LEFT
+	xi = x, yi = y;
+	while(xi != 0 && yi != 7 && gs.board[--xi][++yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[++xi][--yi] = gs.turn+1;
+	}
+
+	// Process LEFT
+	xi = x, yi = y;
+	while(xi != 0 && gs.board[--xi][yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[++xi][yi] = gs.turn+1;
+	}
+
+	// Process UP-LEFT
+	xi = x, yi = y;
+	while(yi != 0 && x != 0 && gs.board[--xi][--yi] == (!gs.turn)+1); // Go all the way out
+	if(gs.board[xi][yi] == gs.turn+1){ // And if the other end is found
+		while(xi != x || yi != y) // Come back and flip on the way
+			gs.board[++xi][++yi] = gs.turn+1;
+	}
 }
 
 void Robot::makeMove(GameState &gs){

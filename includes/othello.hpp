@@ -13,12 +13,6 @@
 namespace Othello {
 
 	typedef struct {
-		unsigned int xpos : 3;
-		unsigned int ypos : 3;
-		//unsigned int unused : 2;
-	} Move;
-
-	typedef struct {
 		uint8_t board [8][8] = {
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0},
@@ -31,11 +25,20 @@ namespace Othello {
 		uint8_t turn = 0;
 	} GameState;
 
+	typedef struct Move Move;
+	struct Move {
+		unsigned int xpos : 3;
+		unsigned int ypos : 3;
+		GameState *gs;
+		std::vector<Move> moves;
+	};
+
 	class Player {
 		public:
 			Player(){};
 			virtual void makeMove(GameState &gs) = 0;
 			void findMoves(GameState gs, std::vector<Move> &moves);
+			void executeMove(GameState &gs, Move m);
 	};
 
 	class Human: public Player {
