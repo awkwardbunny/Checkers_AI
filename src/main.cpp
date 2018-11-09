@@ -16,9 +16,9 @@ int main(int argc, char **argv){
 	}
 	if(strLoad == "y"){
 		timeout = true;
-		game.setPlayer(0, new Robot());
+		game.setPlayer(0, new Robot(game));
 	}else{
-		game.setPlayer(0, new Human());
+		game.setPlayer(0, new Human(game));
 	}
 
 	strLoad = "blah";
@@ -28,9 +28,9 @@ int main(int argc, char **argv){
 	}
 	if(strLoad == "y"){
 		timeout = true;
-		game.setPlayer(1, new Robot());
+		game.setPlayer(1, new Robot(game));
 	}else{
-		game.setPlayer(1, new Human());
+		game.setPlayer(1, new Human(game));
 	}
 
 	strLoad = "blah";

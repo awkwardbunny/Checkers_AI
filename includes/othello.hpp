@@ -33,23 +33,7 @@ namespace Othello {
 		std::vector<Move> moves;
 	};
 
-	class Player {
-		public:
-			Player(){};
-			virtual void makeMove(GameState &gs) = 0;
-			void findMoves(GameState gs, std::vector<Move> &moves);
-			void executeMove(GameState &gs, Move m);
-	};
-
-	class Human: public Player {
-		public:
-			void makeMove(GameState &gs);
-	};
-
-	class Robot: public Player {
-		public:
-			void makeMove(GameState &gs);
-	};
+	class Player;
 
 	class Game {
 		public:
@@ -66,6 +50,7 @@ namespace Othello {
 			void print();
 			void setPlayer(int n, Player *p);
 			void setTurn(int t);
+			bool skipped = false;
 
 		private:
 			bool active = false;
@@ -74,6 +59,29 @@ namespace Othello {
 			GameState gs;
 
 	};
+
+	class Player {
+		public:
+			Player(Game &g);
+			virtual bool makeMove(GameState &gs) = 0;
+			void findMoves(GameState gs, std::vector<Move> &moves);
+			void executeMove(GameState &gs, Move m);
+			Game game;
+		private:
+	};
+
+	class Human: public Player {
+		public:
+			Human(Game g): Player(g){};
+			bool makeMove(GameState &gs);
+	};
+
+	class Robot: public Player {
+		public:
+			Robot(Game g): Player(g){};
+			bool makeMove(GameState &gs);
+	};
+
 
 	std::ostream& operator<<(std::ostream &out, Game gs);
 	std::istream& operator>>(std::istream &in, Game &gs);
