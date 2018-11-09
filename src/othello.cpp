@@ -1,5 +1,7 @@
 #include<cstring>
 #include<vector>
+#include<chrono>
+#include<ctime>
 #include<othello.hpp>
 #include<termcolor.hpp>
 
@@ -246,6 +248,7 @@ bool Human::makeMove(GameState &gs){
 	Move m = moves[choice];
 	executeMove(gs, m);
 
+	std::cout << "\n";
 	gs.turn = !gs.turn;
 	return true;
 }
@@ -323,6 +326,9 @@ void Player::executeMove(GameState &gs, Move m){
 }
 
 bool Robot::makeMove(GameState &gs){
+	//std::clock_t c_start = std::clock();
+	auto t_start = std::chrono::high_resolution_clock::now();
+
 	// Find moves
 	std::vector<Move> moves;
 	findMoves(gs, moves);
@@ -336,7 +342,14 @@ bool Robot::makeMove(GameState &gs){
 		return false;
 	}
 
-	executeMove(gs, moves[0]);
+	Move m = moves[0];
+	executeMove(gs, m);
+	std::cout << "Made move (" << m.xpos << "," << m.ypos <<")\n";
+
+	auto t_end = std::chrono::high_resolution_clock::now();
+	std::cout << "Time spent for decision: " << std::chrono::duration<double, std::milli>(t_end-t_start).count() << "ms\n";
+
+	std::cout << "\n";
 	gs.turn = !gs.turn;
 	return true;
 }
