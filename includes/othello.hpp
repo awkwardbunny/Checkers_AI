@@ -50,6 +50,7 @@ namespace Othello {
 			void print();
 			void setPlayer(int n, Player *p);
 			void setTurn(int t);
+			int decideWinner(GameState gs);
 
 		private:
 			bool active = false;

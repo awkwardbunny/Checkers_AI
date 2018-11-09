@@ -104,10 +104,27 @@ void Game::go(){
 			if(skipped){
 				active = false;
 				std::cout << "\nBoth players skipped. The game ends!\n";
+			}else{
+				skipped = true;
 			}
-			skipped = true;
 		}
 	}
+	int w = decideWinner(gs);
+	std::cout << "The winner is... Player " << w+1 << "!!!\n";
+}
+
+int Game::decideWinner(GameState gs){
+	int one = 0, two = 0;
+	for(int y = 0; y < 8; y++){
+		for(int x = 0; x < 8; x++){
+			if(gs.board[x][y] == 1)
+				one++;
+			else if(gs.board[x][y] == 2)
+				two++;
+		}
+	}
+	
+	return (one<two);
 }
 
 void Player::findMoves(GameState gs, std::vector<Move> &moves){
@@ -333,23 +350,28 @@ bool Robot::makeMove(GameState &gs){
 	std::vector<Move> moves;
 	findMoves(gs, moves);
 
+	Move m;
+	bool ret = true;
+
 	if(moves.size() == 1){
-		executeMove(gs, moves[0]);
-		gs.turn = !gs.turn;
-		return true;
+		m = moves[0];
 	}else if(moves.size() == 0){
-		gs.turn = !gs.turn;
-		return false;
+		std::cout << "None found. Your turn will be skipped...\n";
+		ret = false;
+	}else{
+		// Actual stuff
+		m = moves[0];
 	}
 
-	Move m = moves[0];
-	executeMove(gs, m);
-	std::cout << "Made move (" << m.xpos << "," << m.ypos <<")\n";
+	if(ret){
+		executeMove(gs, m);
+		std::cout << "Made move (" << m.xpos << "," << m.ypos <<")\n";
+	}
 
 	auto t_end = std::chrono::high_resolution_clock::now();
 	std::cout << "Time spent for decision: " << std::chrono::duration<double, std::milli>(t_end-t_start).count() << "ms\n";
 
 	std::cout << "\n";
 	gs.turn = !gs.turn;
-	return true;
+	return ret;
 }

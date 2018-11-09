@@ -43,6 +43,7 @@ int main(int argc, char **argv){
 		std::cout << "Enter filename: ";
 		std::cin >> strLoad;
 		
+		timeout = false;
 		std::fstream fin;
 		fin.open(strLoad);
 		fin >> game;
