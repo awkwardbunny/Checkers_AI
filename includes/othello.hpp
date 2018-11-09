@@ -50,10 +50,10 @@ namespace Othello {
 			void print();
 			void setPlayer(int n, Player *p);
 			void setTurn(int t);
-			bool skipped = false;
 
 		private:
 			bool active = false;
+			bool skipped = false;
 			uint8_t time = 0; // 0 is unlim
 			Player *players[2];
 			GameState gs;
@@ -62,7 +62,7 @@ namespace Othello {
 
 	class Player {
 		public:
-			Player(Game &g);
+			Player(){};
 			virtual bool makeMove(GameState &gs) = 0;
 			void findMoves(GameState gs, std::vector<Move> &moves);
 			void executeMove(GameState &gs, Move m);
@@ -72,13 +72,11 @@ namespace Othello {
 
 	class Human: public Player {
 		public:
-			Human(Game g): Player(g){};
 			bool makeMove(GameState &gs);
 	};
 
 	class Robot: public Player {
 		public:
-			Robot(Game g): Player(g){};
 			bool makeMove(GameState &gs);
 	};
 

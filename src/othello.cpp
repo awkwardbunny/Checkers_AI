@@ -98,14 +98,14 @@ void Game::go(){
 	while(active){
 		print();
 
-		if(players[gs.turn]->makeMove(gs)){
-			active = false;
+		if(!(players[gs.turn]->makeMove(gs))){
+			if(skipped){
+				active = false;
+				std::cout << "\nBoth players skipped. The game ends!\n";
+			}
+			skipped = true;
 		}
 	}
-}
-
-Player::Player(Game &g){
-	game = g;
 }
 
 void Player::findMoves(GameState gs, std::vector<Move> &moves){
@@ -222,23 +222,12 @@ bool Human::makeMove(GameState &gs){
 	for(auto const& m : moves){
 		std::cout << counter++ << ": (" << m.xpos << "," << m.ypos << ")\n";
 	}
-
+	
 	if(!counter){
 		std::cout << "None found. Your turn will be skipped...\n";
-
-		game.skipped = true;
-		gs.turn = !gs.turn;
-
-		if(game.skipped){
-			std::cout << "\nBoth players skipped. The game ends!\n";
-			return true;
-		}
-
 		return false;
 	}
 
-	game.skipped = false;
-	
 	// Pick move
 	int choice = 999;
 	std::string gabario;
@@ -258,7 +247,7 @@ bool Human::makeMove(GameState &gs){
 	executeMove(gs, m);
 
 	gs.turn = !gs.turn;
-	return false;
+	return true;
 }
 
 void Player::executeMove(GameState &gs, Move m){
@@ -334,6 +323,20 @@ void Player::executeMove(GameState &gs, Move m){
 }
 
 bool Robot::makeMove(GameState &gs){
+	// Find moves
+	std::vector<Move> moves;
+	findMoves(gs, moves);
+
+	if(moves.size() == 1){
+		executeMove(gs, moves[0]);
+		gs.turn = !gs.turn;
+		return true;
+	}else if(moves.size() == 0){
+		gs.turn = !gs.turn;
+		return false;
+	}
+
+	executeMove(gs, moves[0]);
 	gs.turn = !gs.turn;
-	return false;
+	return true;
 }
