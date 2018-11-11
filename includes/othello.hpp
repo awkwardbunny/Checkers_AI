@@ -3,6 +3,7 @@
 
 #include<string>
 #include<vector>
+#include<chrono>
 #include<iostream>
 #include<cstdlib>
 
@@ -23,6 +24,7 @@ namespace Othello {
 					{0,0,0,0,0,0,0,0},
 					{0,0,0,0,0,0,0,0}};
 		uint8_t turn = 0;
+		int score = 0;
 	} GameState;
 
 	typedef struct Move Move;
@@ -49,6 +51,7 @@ namespace Othello {
 			friend std::istream& operator>>(std::istream &in, Game &gs);
 			void print();
 			void setPlayer(int n, Player *p);
+			Player *getPlayer(int n);
 			void setTurn(int t);
 			int decideWinner(GameState gs);
 
@@ -68,6 +71,8 @@ namespace Othello {
 			void findMoves(GameState gs, std::vector<Move> &moves);
 			void executeMove(GameState &gs, Move m);
 			Game game;
+			void setTime(int t);
+			int time = 0;
 		private:
 	};
 
@@ -79,11 +84,15 @@ namespace Othello {
 	class Robot: public Player {
 		public:
 			bool makeMove(GameState &gs);
+			void setScore(GameState &gs);
+			void doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth);
 	};
 
 
 	std::ostream& operator<<(std::ostream &out, Game gs);
 	std::istream& operator>>(std::istream &in, Game &gs);
+
+	void setScore(GameState &gs);
 }
 
 #endif

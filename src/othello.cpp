@@ -2,6 +2,7 @@
 #include<vector>
 #include<chrono>
 #include<ctime>
+#include<climits>
 #include<othello.hpp>
 #include<termcolor.hpp>
 
@@ -13,6 +14,10 @@ Game::Game(uint8_t t){
 
 void Game::setTime(uint8_t t){
 	this->time = t;
+	if(players[0])
+		players[0]->setTime(t);
+	if(players[1])
+		players[1]->setTime(t);
 }
 
 uint8_t Game::getTime(){
@@ -21,6 +26,7 @@ uint8_t Game::getTime(){
 
 void Game::setPlayer(int n, Player *p){
 	players[n] = p;
+	p->setTime(time);
 }
 
 void Game::setTurn(int t){
@@ -107,6 +113,8 @@ void Game::go(){
 			}else{
 				skipped = true;
 			}
+		}else{
+			skipped = false;
 		}
 	}
 	int w = decideWinner(gs);
@@ -342,6 +350,14 @@ void Player::executeMove(GameState &gs, Move m){
 	}
 }
 
+Player *Game::getPlayer(int n){
+	return players[n];
+}
+
+void Player::setTime(int t){
+	time = t;
+}
+
 bool Robot::makeMove(GameState &gs){
 	//std::clock_t c_start = std::clock();
 	auto t_start = std::chrono::high_resolution_clock::now();
@@ -352,20 +368,26 @@ bool Robot::makeMove(GameState &gs){
 
 	Move m;
 	bool ret = true;
+	int depth = 0;
 
 	if(moves.size() == 1){
 		m = moves[0];
+		std::cout << "Taking the only move...\n";
 	}else if(moves.size() == 0){
-		std::cout << "None found. Your turn will be skipped...\n";
+		std::cout << "No moves found. Turn will be skipped...\n";
 		ret = false;
 	}else{
 		// Actual stuff
-		m = moves[0];
+		Move curr;
+		curr.gs = &gs;
+		curr.moves = moves;
+		doThings(curr, t_start, time, m, depth);
 	}
 
 	if(ret){
 		executeMove(gs, m);
 		std::cout << "Made move (" << m.xpos << "," << m.ypos <<")\n";
+		std::cout << "Searched to depth " << depth <<"\n";
 	}
 
 	auto t_end = std::chrono::high_resolution_clock::now();
@@ -374,4 +396,131 @@ bool Robot::makeMove(GameState &gs){
 	std::cout << "\n";
 	gs.turn = !gs.turn;
 	return ret;
+}
+
+void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth){
+	auto t_now = std::chrono::high_resolution_clock::now();
+	double ms = std::chrono::duration<double, std::milli>(t_now-start).count();
+
+	float ftime = time;
+	depth = 0;
+	int choice = 0;
+	while((ms/1000.0) <= 0.8*ftime){
+		
+		depth++;
+	
+		t_now = std::chrono::high_resolution_clock::now();
+		ms = std::chrono::duration<double, std::milli>(t_now - start).count();
+	}
+	m = current.moves[choice];
+}
+
+void Robot::setScore(GameState &gs){
+	std::vector<Move> moves;
+	findMoves(gs, moves);
+	int one = 0;
+	int two = 0;
+	int empty = 0;
+
+	for(int y = 0; y < 8; y++){
+		for(int x = 0; x < 8; x++){
+			if(gs.board[x][y] == gs.turn+1){
+				one++;
+			}else if(gs.board[x][y] == (!gs.turn)+1){
+				two--;
+			}else{
+				empty++;
+			}
+		}
+	}
+
+	if(moves.size() == 0){
+		GameState next = gs;
+		next.turn = !gs.turn;
+		std::vector<Move> nextMoves;
+		findMoves(next, nextMoves);
+
+		// game ended?
+		if(nextMoves.size() == 0){
+			if(one-two > 0){
+				gs.score = INT_MAX-100 + (one-two);
+			}else{
+				gs.score = INT_MIN+100 + (one-two);
+			}
+			return;
+		}
+	}
+
+	// Get corners
+	if(gs.board[0][0] == gs.turn+1) gs.score += 500;
+	if(gs.board[0][7] == gs.turn+1) gs.score += 500;
+	if(gs.board[7][7] == gs.turn+1) gs.score += 500;
+	if(gs.board[7][0] == gs.turn+1) gs.score += 500;
+	if(gs.board[0][0] == !gs.turn+1) gs.score -= 500;
+	if(gs.board[0][7] == !gs.turn+1) gs.score -= 500;
+	if(gs.board[7][7] == !gs.turn+1) gs.score -= 500;
+	if(gs.board[7][0] == !gs.turn+1) gs.score -= 500;
+
+	// Get edges
+	// What are loops?
+	if(gs.board[0][2] == gs.turn+1) gs.score += 50;
+	if(gs.board[0][3] == gs.turn+1) gs.score += 50;
+	if(gs.board[0][4] == gs.turn+1) gs.score += 50;
+	if(gs.board[0][5] == gs.turn+1) gs.score += 50;
+	if(gs.board[7][2] == gs.turn+1) gs.score += 50;
+	if(gs.board[7][3] == gs.turn+1) gs.score += 50;
+	if(gs.board[7][4] == gs.turn+1) gs.score += 50;
+	if(gs.board[7][5] == gs.turn+1) gs.score += 50;
+	if(gs.board[2][0] == gs.turn+1) gs.score += 50;
+	if(gs.board[3][0] == gs.turn+1) gs.score += 50;
+	if(gs.board[4][0] == gs.turn+1) gs.score += 50;
+	if(gs.board[5][0] == gs.turn+1) gs.score += 50;
+	if(gs.board[2][7] == gs.turn+1) gs.score += 50;
+	if(gs.board[3][7] == gs.turn+1) gs.score += 50;
+	if(gs.board[4][7] == gs.turn+1) gs.score += 50;
+	if(gs.board[5][7] == gs.turn+1) gs.score += 50;
+	if(gs.board[0][2] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[0][3] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[0][4] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[0][5] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[7][2] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[7][3] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[7][4] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[7][5] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[2][0] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[3][0] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[4][0] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[5][0] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[2][7] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[3][7] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[4][7] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[5][7] == !gs.turn+1) gs.score -= 50;
+
+	// Get near-corner
+	if(gs.board[0][1] == gs.turn+1) gs.score += 250;
+	if(gs.board[1][0] == gs.turn+1) gs.score += 250;
+	if(gs.board[7][1] == gs.turn+1) gs.score += 250;
+	if(gs.board[6][0] == gs.turn+1) gs.score += 250;
+	if(gs.board[0][6] == gs.turn+1) gs.score += 250;
+	if(gs.board[1][7] == gs.turn+1) gs.score += 250;
+	if(gs.board[7][6] == gs.turn+1) gs.score += 250;
+	if(gs.board[6][7] == gs.turn+1) gs.score += 250;
+	if(gs.board[0][1] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[1][0] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[7][1] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[6][0] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[0][6] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[1][7] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[7][6] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[6][7] == !gs.turn+1) gs.score -= 250;
+
+	for(int y = 1; y < 7; y++){
+		for(int x = 1; x < 7; x++){
+			if(gs.board[x][y] == gs.turn+1)
+				gs.score++;
+			else if(gs.board[x][y] == !gs.turn+1)
+				gs.score--;
+
+		}
+	}
 }
