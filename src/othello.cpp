@@ -136,7 +136,7 @@ int Game::decideWinner(GameState gs){
 }
 
 void Player::findMoves(GameState gs, std::vector<Move> &moves){
-	Move m = {.xpos = 0, .ypos = 0, .gs = NULL};
+	Move m = {.xpos = 0, .ypos = 0, .gs = NULL, .bestMove = -1};
 	for(int y = 0; y < 8; y++){
 		for(int x = 0; x < 8; x++){
 			// is valid move?
@@ -407,12 +407,110 @@ void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_res
 	int choice = 0;
 	while((ms/1000.0) <= 0.8*ftime){
 		
-		depth++;
+		minimax(current, depth++, true, 0, 0, true, choice);
 	
 		t_now = std::chrono::high_resolution_clock::now();
 		ms = std::chrono::duration<double, std::milli>(t_now - start).count();
 	}
 	m = current.moves[choice];
+}
+
+int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bool first, int &choice){
+	std::srand(std::time(NULL));
+	std::cout << depth << "\n";
+	std::cout << "A\n";
+
+	if(depth == 0 && first){
+		int ind = -1;
+		int blah;
+		int bestVal = INT_MIN;
+		std::cout << "B\n";
+		for(unsigned int i = 0; i < current.moves.size(); i++){
+			current.moves[i].gs = (GameState *)malloc(69);
+			std::memcpy(current.moves[i].gs, current.gs, 69);
+			std::cout << "E\n";
+			executeMove(*current.moves[i].gs, current.moves[i]);
+			std::cout << "F\n";
+			findMoves(*current.moves[i].gs, current.moves[i].moves);
+			std::cout << "C\n";
+			int val = minimax(current.moves[i], depth, false, alpha, beta, false, blah);
+			std::cout << "D\n";
+			if(val > bestVal){
+				bestVal = val;
+				ind = i;
+			}else if(val == bestVal){
+				if(rand() % 2){
+					ind = i;
+				}
+			}
+			alpha = (alpha > bestVal) ? alpha : bestVal;
+			if(beta <= alpha) break;
+		}
+		current.bestMove = ind;
+		choice = ind;
+		return bestVal;
+	}
+
+	if(depth == 0){
+		// return value
+		setScore(*current.gs);
+		return current.gs->score;
+	}
+
+	int blah;
+	int bestVal;
+	int ind = -1;
+	if(isMax){
+		bestVal = INT_MIN;
+		for(unsigned int i = 0; i < current.moves.size(); i++){
+			if(current.bestMove != -1){
+				current.moves[i].gs = (GameState *)malloc(69);
+				std::memcpy(current.moves[i].gs, current.gs, 69);
+				executeMove(*current.moves[i].gs, current.moves[i]);
+				findMoves(*current.moves[i].gs, current.moves[i].moves);
+			}
+			int val = minimax(current.moves[i], depth-1, false, alpha, beta, false, blah);
+			if(val > bestVal){
+				bestVal = val;
+				ind = i;
+			}else if(val == bestVal){
+				if(rand() % 2){
+					ind = i;
+				}
+			}
+			alpha = (alpha > bestVal) ? alpha : bestVal;
+			if(beta <= alpha) break;
+		}
+		current.bestMove = ind;
+		if(first) choice = ind;
+		//std::cout << ind << "\n";
+		return bestVal;
+	}else{
+		bestVal = INT_MAX;
+		for(unsigned int i = 0; i < current.moves.size(); i++){
+			if(current.bestMove != -1){
+				current.moves[i].gs = (GameState *)malloc(69);
+				std::memcpy(current.moves[i].gs, current.gs, 69);
+				executeMove(*current.moves[i].gs, current.moves[i]);
+				findMoves(*current.moves[i].gs, current.moves[i].moves);
+			}
+			int val = minimax(current.moves[i], depth-1, true, alpha, beta, false, blah);
+			if(val < bestVal){
+				bestVal = val;
+				ind = i;
+			}else if(val == bestVal){
+				if(rand() % 2){
+					ind = i;
+				}
+			}
+			beta = (beta < bestVal) ? beta : bestVal;
+			if(beta <= alpha) break;
+		}
+		current.bestMove = ind;
+		if(first) choice = ind;
+		//std::cout << ind << "\n";
+		return bestVal;
+	}
 }
 
 void Robot::setScore(GameState &gs){
