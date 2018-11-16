@@ -40,7 +40,7 @@ namespace Othello {
 
 	class Game {
 		public:
-			Game(): Game(0){}
+			Game(){}
 			Game(uint8_t time);
 			
 			void go();

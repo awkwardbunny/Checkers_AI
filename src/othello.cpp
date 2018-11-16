@@ -26,7 +26,7 @@ uint8_t Game::getTime(){
 
 void Game::setPlayer(int n, Player *p){
 	players[n] = p;
-	p->setTime(time);
+	//p->setTime(time);
 }
 
 void Game::setTurn(int t){

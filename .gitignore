@@ -3,3 +3,5 @@ tests/
 checkers
 othello
 *.swp
+core
+.gdb_history
