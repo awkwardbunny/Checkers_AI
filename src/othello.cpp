@@ -252,6 +252,7 @@ bool Human::makeMove(GameState &gs){
 	
 	if(!counter){
 		std::cout << "None found. Your turn will be skipped...\n";
+		gs.turn = !gs.turn;
 		return false;
 	}
 
@@ -381,7 +382,8 @@ bool Robot::makeMove(GameState &gs){
 		Move curr;
 		curr.gs = &gs;
 		curr.moves = moves;
-		doThings(curr, t_start, time, m, depth);
+		int p = doThings(curr, t_start, time, m, depth);
+		std::cout << "Of " << moves.size() << " moves, picked " << p << "\n";
 	}
 
 	if(ret){
@@ -398,7 +400,7 @@ bool Robot::makeMove(GameState &gs){
 	return ret;
 }
 
-void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth){
+int Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth){
 	auto t_now = std::chrono::high_resolution_clock::now();
 	double ms = std::chrono::duration<double, std::milli>(t_now-start).count();
 
@@ -414,6 +416,7 @@ void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_res
 		ms = std::chrono::duration<double, std::milli>(t_now - start).count();
 	}
 	m = current.moves[choice];
+	return choice;
 }
 
 int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bool first, int &choice, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time){
@@ -564,68 +567,71 @@ void Robot::setScore(GameState &gs){
 		}
 	}
 
+	// Mobility?
+	gs.score += (moves.size() - 3) * 40;
+
 	// Get corners
-	if(gs.board[0][0] == gs.turn+1) gs.score += 500;
-	if(gs.board[0][7] == gs.turn+1) gs.score += 500;
-	if(gs.board[7][7] == gs.turn+1) gs.score += 500;
-	if(gs.board[7][0] == gs.turn+1) gs.score += 500;
-	if(gs.board[0][0] == !gs.turn+1) gs.score -= 500;
-	if(gs.board[0][7] == !gs.turn+1) gs.score -= 500;
-	if(gs.board[7][7] == !gs.turn+1) gs.score -= 500;
-	if(gs.board[7][0] == !gs.turn+1) gs.score -= 500;
+	if(gs.board[0][0] == gs.turn+1) gs.score += 900;
+	if(gs.board[0][7] == gs.turn+1) gs.score += 900;
+	if(gs.board[7][7] == gs.turn+1) gs.score += 900;
+	if(gs.board[7][0] == gs.turn+1) gs.score += 900;
+	if(gs.board[0][0] == !gs.turn+1) gs.score -= 900;
+	if(gs.board[0][7] == !gs.turn+1) gs.score -= 900;
+	if(gs.board[7][7] == !gs.turn+1) gs.score -= 900;
+	if(gs.board[7][0] == !gs.turn+1) gs.score -= 900;
 
 	// Get edges
 	// What are loops?
-	if(gs.board[0][2] == gs.turn+1) gs.score += 50;
-	if(gs.board[0][3] == gs.turn+1) gs.score += 50;
-	if(gs.board[0][4] == gs.turn+1) gs.score += 50;
-	if(gs.board[0][5] == gs.turn+1) gs.score += 50;
-	if(gs.board[7][2] == gs.turn+1) gs.score += 50;
-	if(gs.board[7][3] == gs.turn+1) gs.score += 50;
-	if(gs.board[7][4] == gs.turn+1) gs.score += 50;
-	if(gs.board[7][5] == gs.turn+1) gs.score += 50;
-	if(gs.board[2][0] == gs.turn+1) gs.score += 50;
-	if(gs.board[3][0] == gs.turn+1) gs.score += 50;
-	if(gs.board[4][0] == gs.turn+1) gs.score += 50;
-	if(gs.board[5][0] == gs.turn+1) gs.score += 50;
-	if(gs.board[2][7] == gs.turn+1) gs.score += 50;
-	if(gs.board[3][7] == gs.turn+1) gs.score += 50;
-	if(gs.board[4][7] == gs.turn+1) gs.score += 50;
-	if(gs.board[5][7] == gs.turn+1) gs.score += 50;
-	if(gs.board[0][2] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[0][3] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[0][4] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[0][5] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[7][2] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[7][3] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[7][4] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[7][5] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[2][0] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[3][0] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[4][0] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[5][0] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[2][7] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[3][7] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[4][7] == !gs.turn+1) gs.score -= 50;
-	if(gs.board[5][7] == !gs.turn+1) gs.score -= 50;
+	if(gs.board[0][2] == gs.turn+1) gs.score += 150;
+	if(gs.board[0][3] == gs.turn+1) gs.score += 150;
+	if(gs.board[0][4] == gs.turn+1) gs.score += 150;
+	if(gs.board[0][5] == gs.turn+1) gs.score += 150;
+	if(gs.board[7][2] == gs.turn+1) gs.score += 150;
+	if(gs.board[7][3] == gs.turn+1) gs.score += 150;
+	if(gs.board[7][4] == gs.turn+1) gs.score += 150;
+	if(gs.board[7][5] == gs.turn+1) gs.score += 150;
+	if(gs.board[2][0] == gs.turn+1) gs.score += 150;
+	if(gs.board[3][0] == gs.turn+1) gs.score += 150;
+	if(gs.board[4][0] == gs.turn+1) gs.score += 150;
+	if(gs.board[5][0] == gs.turn+1) gs.score += 150;
+	if(gs.board[2][7] == gs.turn+1) gs.score += 150;
+	if(gs.board[3][7] == gs.turn+1) gs.score += 150;
+	if(gs.board[4][7] == gs.turn+1) gs.score += 150;
+	if(gs.board[5][7] == gs.turn+1) gs.score += 150;
+	if(gs.board[0][2] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[0][3] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[0][4] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[0][5] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[7][2] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[7][3] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[7][4] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[7][5] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[2][0] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[3][0] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[4][0] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[5][0] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[2][7] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[3][7] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[4][7] == !gs.turn+1) gs.score -= 150;
+	if(gs.board[5][7] == !gs.turn+1) gs.score -= 150;
 
 	// Get near-corner
-	if(gs.board[0][1] == gs.turn+1) gs.score += 250;
-	if(gs.board[1][0] == gs.turn+1) gs.score += 250;
-	if(gs.board[7][1] == gs.turn+1) gs.score += 250;
-	if(gs.board[6][0] == gs.turn+1) gs.score += 250;
-	if(gs.board[0][6] == gs.turn+1) gs.score += 250;
-	if(gs.board[1][7] == gs.turn+1) gs.score += 250;
-	if(gs.board[7][6] == gs.turn+1) gs.score += 250;
-	if(gs.board[6][7] == gs.turn+1) gs.score += 250;
-	if(gs.board[0][1] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[1][0] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[7][1] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[6][0] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[0][6] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[1][7] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[7][6] == !gs.turn+1) gs.score -= 250;
-	if(gs.board[6][7] == !gs.turn+1) gs.score -= 250;
+	if(gs.board[0][1] == gs.turn+1) gs.score += 350;
+	if(gs.board[1][0] == gs.turn+1) gs.score += 350;
+	if(gs.board[7][1] == gs.turn+1) gs.score += 350;
+	if(gs.board[6][0] == gs.turn+1) gs.score += 350;
+	if(gs.board[0][6] == gs.turn+1) gs.score += 350;
+	if(gs.board[1][7] == gs.turn+1) gs.score += 350;
+	if(gs.board[7][6] == gs.turn+1) gs.score += 350;
+	if(gs.board[6][7] == gs.turn+1) gs.score += 350;
+	if(gs.board[0][1] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[1][0] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[7][1] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[6][0] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[0][6] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[1][7] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[7][6] == !gs.turn+1) gs.score -= 350;
+	if(gs.board[6][7] == !gs.turn+1) gs.score -= 350;
 
 	for(int y = 1; y < 7; y++){
 		for(int x = 1; x < 7; x++){

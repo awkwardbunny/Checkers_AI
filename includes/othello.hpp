@@ -86,7 +86,7 @@ namespace Othello {
 		public:
 			bool makeMove(GameState &gs);
 			void setScore(GameState &gs);
-			void doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth);
+			int doThings(Move current, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time, Move &m, int &depth);
 			int minimax(Move &c, int d, bool m, int a, int b, bool f, int &choice, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time);
 	};
 
