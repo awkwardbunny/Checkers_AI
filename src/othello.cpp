@@ -405,9 +405,10 @@ void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_res
 	float ftime = time;
 	depth = 0;
 	int choice = 0;
-	while((ms/1000.0) <= 0.8*ftime){
+	while((ms/1000.0) <= 0.98*ftime){
 		
-		minimax(current, depth++, true, 0, 0, true, choice);
+		//std::cout << "In doThings loop.\n";
+		minimax(current, depth++, true, INT_MIN, INT_MAX, true, choice, start, time);
 	
 		t_now = std::chrono::high_resolution_clock::now();
 		ms = std::chrono::duration<double, std::milli>(t_now - start).count();
@@ -415,26 +416,34 @@ void Robot::doThings(Move current, std::chrono::time_point<std::chrono::high_res
 	m = current.moves[choice];
 }
 
-int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bool first, int &choice){
+int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bool first, int &choice, std::chrono::time_point<std::chrono::high_resolution_clock> start, int time){
+
+	auto t_now = std::chrono::high_resolution_clock::now();
+	double ms = std::chrono::duration<double, std::milli>(t_now-start).count();
+	float ftime = time;
+	if((ms/1000.0) > 0.9*ftime){
+		return 0;
+	}
+
 	std::srand(std::time(NULL));
-	std::cout << depth << "\n";
-	std::cout << "A\n";
+	//std::cout << depth;
+	//std::cout << "A";
 
 	if(depth == 0 && first){
 		int ind = -1;
 		int blah;
 		int bestVal = INT_MIN;
-		std::cout << "B\n";
+		//std::cout << "B";
 		for(unsigned int i = 0; i < current.moves.size(); i++){
 			current.moves[i].gs = (GameState *)malloc(69);
 			std::memcpy(current.moves[i].gs, current.gs, 69);
-			std::cout << "E\n";
+			//std::cout << "E";
 			executeMove(*current.moves[i].gs, current.moves[i]);
-			std::cout << "F\n";
+			//std::cout << "F";
 			findMoves(*current.moves[i].gs, current.moves[i].moves);
-			std::cout << "C\n";
-			int val = minimax(current.moves[i], depth, false, alpha, beta, false, blah);
-			std::cout << "D\n";
+			//std::cout << "C\n";
+			int val = minimax(current.moves[i], depth, false, alpha, beta, false, blah, start, time);
+			//std::cout << "D\n";
 			if(val > bestVal){
 				bestVal = val;
 				ind = i;
@@ -453,6 +462,7 @@ int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bo
 
 	if(depth == 0){
 		// return value
+		//std::cout << "\n";
 		setScore(*current.gs);
 		return current.gs->score;
 	}
@@ -463,13 +473,14 @@ int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bo
 	if(isMax){
 		bestVal = INT_MIN;
 		for(unsigned int i = 0; i < current.moves.size(); i++){
-			if(current.bestMove != -1){
-				current.moves[i].gs = (GameState *)malloc(69);
+			if(current.bestMove == -1){
+				//std::cout << "\nIn IF copy\n";
+				current.moves[i].gs = (GameState *)malloc(69); // watch me forget to free this
 				std::memcpy(current.moves[i].gs, current.gs, 69);
 				executeMove(*current.moves[i].gs, current.moves[i]);
 				findMoves(*current.moves[i].gs, current.moves[i].moves);
 			}
-			int val = minimax(current.moves[i], depth-1, false, alpha, beta, false, blah);
+			int val = minimax(current.moves[i], depth-1, false, alpha, beta, false, blah, start, time);
 			if(val > bestVal){
 				bestVal = val;
 				ind = i;
@@ -488,13 +499,17 @@ int Robot::minimax(Move &current, int depth, bool isMax, int alpha, int beta, bo
 	}else{
 		bestVal = INT_MAX;
 		for(unsigned int i = 0; i < current.moves.size(); i++){
-			if(current.bestMove != -1){
-				current.moves[i].gs = (GameState *)malloc(69);
+			if(current.bestMove == -1){
+				//std::cout << "\nIn ELSE copy\n";
+				current.moves[i].gs = (GameState *)malloc(69); // watch me forget to free this
 				std::memcpy(current.moves[i].gs, current.gs, 69);
 				executeMove(*current.moves[i].gs, current.moves[i]);
 				findMoves(*current.moves[i].gs, current.moves[i].moves);
+			}else{
+				//std::cout << "\nIn ELSE-ELSE\n";
+				//std::cout << current.bestMove << "\n";
 			}
-			int val = minimax(current.moves[i], depth-1, true, alpha, beta, false, blah);
+			int val = minimax(current.moves[i], depth-1, true, alpha, beta, false, blah, start, time);
 			if(val < bestVal){
 				bestVal = val;
 				ind = i;
